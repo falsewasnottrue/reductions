@@ -60,23 +60,33 @@ object ParallelParenthesesBalancing {
     /**
       *
 
-)()()( -> (1,1)
-)(() -> (1,1)
-))(
-      ))( ->
-      * @return
+((( ())
+0,3 1,0
+l1,r1 l2,r2
+
+r1-l2,r2-l1
+
+2,0    * @return
       */
     def traverse(from: Int, until: Int, arg1: Int, arg2: Int): (Int, Int) = {
-      var i = from
       var closing = 0
       var opening = 0
-      var lastOpened = false
-      while (i<until) {
 
-        i = i+1
+      var i = from
+      while (i<until) {
+        if (chars(i) == '(') {
+          opening += 1
+        } else if (chars(i) == ')') {
+          if (opening > 0) {
+            opening -= 1
+          } else {
+            closing += 1
+          }
+        }
+        i += 1
       }
 
-      (closing, opening)
+      (closing + arg1, opening + arg2)
     }
 
     def reduce(from: Int, until: Int): (Int, Int) = {
@@ -88,8 +98,8 @@ object ParallelParenthesesBalancing {
           reduce(from, mid),
           reduce(mid, until)
         )
-        // TODO cases?
-        (l1, r2)
+
+        (r1-l1, r2-l1)
       }
     }
 
